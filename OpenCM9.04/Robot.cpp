@@ -25,8 +25,8 @@ void Robot::move(int goal[], float time){
   for(int i=1; i<19; i++){  
     if(getRobotPosition(i)!=goal[i]){ 
       Dxl.writeWord(i, 32,(abs(getRobotPosition(i)-goal[i])/time)*0.7);
-      Dxl.writeWord(i, 30, goal[i]+TRIM[i]);
-      setRobotPosition(i,goal[i]);
+      Dxl.writeWord(i, 30, getTrimmedPosition(i, goal[i]));
+      setRobotPosition(i,getTrimmedPosition(i, goal[i]));
     }
   }
   delay(time*500);
@@ -46,6 +46,10 @@ int Robot::getRobotPosition(int id){
   return rp[id];
 }
 
+int Robot::getTrimmedPosition(int id, int position){
+  return position + TRIM[id];
+}
+
 /*******************************************************************************************
  **********************************    CONTROL    ******************************************
  *******************************************************************************************/
@@ -54,6 +58,7 @@ int Robot::getRobotPosition(int id){
  * Caminar
  */
 void Robot::walk(int steps){
+  move(IPW, 0.2);
   for(int i=0;i<steps;i++){
     //TODO
   }
@@ -87,6 +92,10 @@ void Robot::lastStep(float time){
  */
 void Robot::stepRight(float time){
   //TODO:
+  //balance(1, 40, 0.5);
+  move(STEPR[0], time);
+  move(STEPR[1], time);
+  move(STEPR[2], time);
 }
 
 /*
@@ -120,8 +129,26 @@ void Robot::rectify(){
 /*
  * Balancear
  */
-void Robot::balance(int amp, int dir, float time){
-  //TODO:
+void Robot::balance(int dir, int amp, float time){
+  int bTemp[NUM_ACT+1];
+  for(int i=0; i<=NUM_ACT+1; i++){
+    bTemp[i] = BALANCE[i];
+  }
+  if(dir==1){
+    bTemp[9] = bTemp[9]+amp;
+    bTemp[10] = bTemp[10]+amp;
+    bTemp[17] = bTemp[17]+amp;
+    bTemp[18] = bTemp[18]+amp;
+    move(bTemp, time);
+  }else if(dir == -1){
+    bTemp[9] = bTemp[9]-amp;
+    bTemp[10] = bTemp[10]-amp;
+    bTemp[17] = bTemp[17]-amp;
+    bTemp[18] = bTemp[18]-amp;
+    move(bTemp, time);
+  }else{
+    move(IPW, time);
+  }
 }
 
 /*

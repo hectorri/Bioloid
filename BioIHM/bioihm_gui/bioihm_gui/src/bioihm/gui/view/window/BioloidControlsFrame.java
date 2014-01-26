@@ -1,6 +1,5 @@
 package bioihm.gui.view.window;
 
-import java.awt.EventQueue;
 import java.awt.Rectangle;
 
 import javax.swing.JFrame;
